@@ -2,9 +2,9 @@
 
 O simulador foi desenvolvido na linguagem Python e reproduz o comportamento de
 uma memória cache associativa por conjunto com arquitetura configurável. Todos
-os parâmetros exigidos — política de escrita, tamanho da linha, número de linhas,
+os parâmetros exigidos, política de escrita, tamanho da linha, número de linhas,
 associatividade, tempo de acerto, política de substituição e tempo de acesso à
-memória principal — são fornecidos por meio de argumentos de linha de comando,
+memória principal, são fornecidos por meio de argumentos de linha de comando,
 seguindo a ordem: `<politica> <tam_linha> <num_linhas> <assoc> <hit_time> <subst>
 <tempo_mp> <arquivo>`. O programa lê um arquivo-texto de entrada contendo, em cada
 linha, um endereço de 32 bits em hexadecimal seguido da operação (`R` para leitura
@@ -18,10 +18,10 @@ A cache é representada como uma lista de conjuntos, em que cada conjunto é, po
 vez, uma lista de linhas. O número de conjuntos é determinado pela razão entre o
 número de linhas e a associatividade. Essa organização permite a indexação direta
 do conjunto a partir do endereço, sem necessidade de varredura. Cada linha é
-representada por um dicionário com dois campos: `tag`, que identifica o bloco de
-memória armazenado, e `dirty`, que assume o valor 1 quando a linha foi modificada
-e ainda não foi escrita na memória principal — informação utilizada exclusivamente
-pela política write-back.
+representada por um dicionário com dois campos: o Rótulo, que identifica o bloco de
+memória armazenado, e o indicador de modificação (`dirty`), que assume o valor 1 quando
+a linha foi modificada e ainda não foi escrita na memória principal, informação utilizada
+exclusivamente pela política write-back.
 
 A validade da linha é tratada de forma implícita pela ocupação da lista do conjunto:
 um conjunto que ainda não atingiu sua associatividade possui menos elementos que o
@@ -38,27 +38,27 @@ portanto, o primeiro elemento da lista.
 
 ## 1.2 Mapeamento do endereço
 
-O mapeamento decompõe cada endereço de 32 bits em três campos: o deslocamento
-(offset), o índice do conjunto e o rótulo (tag). O número de bits de cada campo é
+O mapeamento decompõe cada endereço de 32 bits em três campos: a Palavra,
+o Conjunto e o Rótulo. O número de bits de cada campo é
 calculado uma única vez no início da simulação, pois depende apenas da configuração.
-O número de bits de deslocamento corresponde ao logaritmo na base 2 do tamanho da
-linha, e o número de bits de índice corresponde ao logaritmo na base 2 do número de
+O número de bits de Palavra corresponde ao logaritmo na base 2 do tamanho da
+linha, e o número de bits de Conjunto corresponde ao logaritmo na base 2 do número de
 conjuntos.
 
 A extração dos campos é realizada por operações de deslocamento e mascaramento de
-bits. O índice do conjunto é obtido descartando-se os bits de deslocamento e
-isolando-se os bits seguintes por meio de uma máscara, enquanto o rótulo corresponde
+bits. O Conjunto é obtido descartando-se os bits de Palavra e
+isolando-se os bits seguintes por meio de uma máscara, enquanto o Rótulo corresponde
 aos bits restantes mais significativos. Como o simulador não armazena o conteúdo dos
-dados — apenas a localização dos blocos —, o campo de deslocamento é descartado após
+dados, mas apenas a localização dos blocos, o campo de Palavra é descartado após
 o cálculo. Essa formulação contempla naturalmente os casos extremos de mapeamento:
 quando a associatividade é igual ao número de linhas, existe um único conjunto, o
-campo de índice ocupa zero bits e todos os endereços são mapeados para o mesmo
+campo de Conjunto ocupa zero bits e todos os endereços são mapeados para o mesmo
 conjunto, caracterizando uma cache totalmente associativa.
 
 ## 1.3 Algoritmo de simulação
 
 Para cada acesso, o simulador decompõe o endereço, identifica o conjunto de destino
-e verifica a presença do rótulo entre as linhas desse conjunto. Quando o rótulo é
+e verifica a presença do Rótulo entre as linhas desse conjunto. Quando o Rótulo é
 encontrado, registra-se um acerto e a linha é promovida ao final da lista, atualizando
 a ordenação LRU. Quando não é encontrado, registra-se uma falta, cujo tratamento
 depende da operação e da política de escrita configurada.
@@ -67,7 +67,7 @@ Em uma falta, quando há espaço disponível no conjunto, o novo bloco é simple
 inserido. Quando o conjunto está cheio, a linha vítima é selecionada conforme a
 política de substituição vigente e removida; caso essa vítima esteja marcada como
 modificada (dirty), seu conteúdo é primeiro escrito na memória principal, contabilizando
-uma escrita adicional — operação conhecida como write-back.
+uma escrita adicional, operação conhecida como write-back.
 
 O comportamento das escritas segue a política configurada. Na política write-through,
 toda operação de escrita é propagada imediatamente à memória principal, mantendo-a
@@ -98,8 +98,8 @@ com quatro casas decimais.
 ## 1.6 Funções principais
 
 O programa está organizado nas seguintes funções principais: a função de cálculo dos
-campos do endereço, que determina o número de bits de deslocamento e de índice a partir
-da configuração; a função de decomposição, que extrai o índice e o rótulo de um endereço;
+campos do endereço, que determina o número de bits de Palavra e de Conjunto a partir
+da configuração; a função de decomposição, que extrai o Conjunto e o Rótulo de um endereço;
 a função de acesso, que concentra a lógica de acerto, falta, escrita e substituição; a
 função de seleção da vítima, que isola a diferença entre as políticas LRU e aleatória;
 e a função de leitura do arquivo de entrada, implementada como um gerador para processar

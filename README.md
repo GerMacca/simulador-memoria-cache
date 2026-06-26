@@ -56,7 +56,7 @@ Os gráficos (`.png`) e as tabelas (`.txt`) são gerados na pasta `resultados/`.
 
 ## Observação sobre a política write-through
 
-O enunciado descreve a política write-through como write-non-allocate. Esse é o
+O enunciado descreve a política write-through como write-non-allocate, que é o
 comportamento adotado por padrão. A constante `WT_WRITE_ALLOCATE`, no início do
 arquivo `simulacaoDeCache.py`, permite alternar para write-allocate caso seja
 necessário reproduzir os valores das tabelas-exemplo do enunciado.
