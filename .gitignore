@@ -1,1 +1,5 @@
 O que falta.md
+build/
+*.spec
+__pycache__/
+*.pyc
