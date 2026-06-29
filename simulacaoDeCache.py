@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 WRITE_THROUGH = 0
 WRITE_BACK = 1
-WT_WRITE_ALLOCATE = False
+WT_WRITE_ALLOCATE = True
 
 SUBST_LRU = 0
 SUBST_RANDOM = 1

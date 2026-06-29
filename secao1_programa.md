@@ -71,12 +71,12 @@ uma escrita adicional, operação conhecida como write-back.
 
 O comportamento das escritas segue a política configurada. Na política write-through,
 toda operação de escrita é propagada imediatamente à memória principal, mantendo-a
-sempre sincronizada; em uma falta de escrita, adotou-se a estratégia write-non-allocate,
-conforme descrito no enunciado, em que o dado é gravado diretamente na memória principal
-sem que o bloco correspondente seja carregado na cache. Na política write-back, as
-escritas que resultam em acerto apenas marcam a linha como modificada, e as faltas de
-escrita carregam o bloco para a cache (write-allocate), também marcando-o como modificado;
-a memória principal só é atualizada quando uma linha modificada é posteriormente
+sempre sincronizada. Em uma falta de escrita, adotou-se a estratégia write-allocate,
+em que o bloco correspondente é carregado para a cache antes da gravação, de modo a
+reproduzir os resultados de referência fornecidos no enunciado. Na política write-back,
+as escritas que resultam em acerto apenas marcam a linha como modificada, e as faltas de
+escrita carregam o bloco para a cache (write-allocate), também marcando-o como modificado.
+A memória principal só é atualizada quando uma linha modificada é posteriormente
 substituída.
 
 ## 1.4 Política de substituição aleatória
