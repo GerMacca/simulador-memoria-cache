@@ -217,24 +217,5 @@ def main():
     imprimir_saida(cfg, contadores)
 
 
-def main():
-    cfg = parse_args(sys.argv)
-    random.seed(42)
-
-    num_conjuntos, bits_offset, bits_indice = calcular_campos(cfg)
-    cache = criar_cache(num_conjuntos)
-    contadores = {
-        "read_hits": 0, "read_misses": 0,
-        "write_hits": 0, "write_misses": 0,
-        "leituras_mp": 0, "escritas_mp": 0,
-    }
-
-    for endereco, operacao in ler_acessos(cfg.arquivo):
-        tag, indice = decompor(endereco, bits_offset, bits_indice)
-        acessar(cache, indice, tag, cfg, contadores, operacao)
-
-    imprimir_saida(cfg, contadores)
-
-
 if __name__ == "__main__":
     main()
